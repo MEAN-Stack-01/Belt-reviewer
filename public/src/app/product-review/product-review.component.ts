@@ -1,25 +1,22 @@
-import { Component, OnInit,Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../http.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 
 @Component({
-  selector: 'app-edit-product',
-  templateUrl: './edit-product.component.html',
-  styleUrls: ['./edit-product.component.css']
+  selector: 'app-product-review',
+  templateUrl: './product-review.component.html',
+  styleUrls: ['./product-review.component.css']
 })
-export class EditProductComponent implements OnInit {
-  selectedMovie: any;
-  selelctedId: any;
-  newReview : any;
-  errs = [];
+export class ProductReviewComponent implements OnInit {
+  selectedMovie : any;
   selectedId : any;
+  errors = [];
 
   constructor(private _httpService: HttpService,
               private _route: ActivatedRoute,
               private _router: Router)
   {
-    this.newReview = {reviewer:"",rating:"",comment:""}
     this.selectedMovie = {title:"",name:"",rating:"",review:""}
   }
 
@@ -29,7 +26,10 @@ export class EditProductComponent implements OnInit {
         this.selectedId = params['id'];
         this.getSelected(this.selectedId);
     });
+  }
 
+  goHome() {
+    this._router.navigate(['/products-list']);
   }
 
   getSelected(id){
@@ -41,30 +41,39 @@ export class EditProductComponent implements OnInit {
         this.selectedMovie = info['item'];
       }else{
         console.log("Cannot find item");
-        this.errs = info['messages']
+        this.errors = info['messages']
       }
     })
   }
 
-  goHome() {
-    this._router.navigate(['/products-list']);
-  }
-
-  onSubmit(){
-    console.log("IN COMPONENT EDIT")
-    let observable = this._httpService.createNewReview(this.newReview,this.selectedId);
+  onDelete(id){
+    console.log("IN COMPONENT DELETE")
+    let observable = this._httpService.deleteItem(id);
     observable.subscribe(info => {
       if (info['status'] == true){
-        console.log("updated ITEM INFO", info);
-        this.newReview = info['item']
+        console.log("DELETED ITEM ", info);
+        // this.getAll();
         this.goHome();
       }else{
-        this.errs = info['messages']
-        console.log("ERROR WHEN Updating ITEM",this.errs);
+        console.log("Cannot find item");
       }
     })
+
   }
 
+  onReviewDelete(id){
+    console.log("IN COMPONENT DELETE",id)
+    let observable = this._httpService.delReview(id);
+    observable.subscribe(info => {
+      if (info['status'] == true){
+        console.log("DELETED Review ", info);
+        // this.getAll();
+        this.goHome();
+      }else{
+        console.log("Cannot find item");
+      }
+    })
 
+  }
 
 }

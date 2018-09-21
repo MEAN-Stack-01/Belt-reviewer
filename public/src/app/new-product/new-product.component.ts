@@ -11,13 +11,13 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 })
 export class NewProductComponent implements OnInit {
 
-  newProduct : any;
+  newMovie : any;
   errs = [];
   constructor(private _httpService: HttpService,
               private _route: ActivatedRoute,
               private _router: Router)
   {
-    this.newProduct = {title:"",price:"",url:""}
+    this.newMovie = {title:"",name:"",ratings:"",review:""}
   }
 
   ngOnInit() {
@@ -29,13 +29,14 @@ export class NewProductComponent implements OnInit {
 
   onSubmit(){
     console.log("IN NEW COMPONENT ONSUBMIT");
-    let observable = this._httpService.createNew(this.newProduct);
+    let observable = this._httpService.createNew(this.newMovie);
     observable.subscribe(info => {
       if (info['status'] == true){
         this.goHome();
       }else{
         console.log("ERROR WHEN CREATING NEW OBJECT",info);
         this.errs = info['messages']
+        console.log("ERROR WHEN CREATING NEW OBJECT",this.errs);
       }
     })
   }

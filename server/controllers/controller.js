@@ -1,13 +1,15 @@
 const mongoose = require('mongoose');
 
-const ProductSchema  = require('../models/models');
+const ReviewSchema  = require('../models/reviews');
+const MovieSchema  = require('../models/movies');
 
-const Product = mongoose.model('Product',ProductSchema);
+const Review = mongoose.model('Review',ReviewSchema);
+const Movie = mongoose.model('Movie',MovieSchema);
 
 module.exports = {
 
   index : (req, res) => {
-    Product.find({})
+    Movie.find({})
       .then(
         data => {
           console.log("IN CONTROLLER INDEX",data);
@@ -22,30 +24,82 @@ module.exports = {
       )
   },
 
-  create : (req,res) => {
-    Product.create(req.body)
-      .then(
-        data => {
-          console.log("IN CONTROLLER CREATE",data);
-          res.json({status: true, messages: {success:"Product successfully added!"},item:data})
-        }
-      )
-      .catch(
-        err => {
-          console.log("IN CONTROLLER CREATE ERRORS",err);
-          if(err){
-            let messages = {}
-            for (let key in err.errors){
-              messages[key] = err.errors[key].message;
-            }
-            res.json({status: false, messages: messages })
+  // create : function(req, res) {
+  //     console.log("POST DATA", req.body);
+  //     var msg1 = new Message(req.body);
+  //     msg1.save(function(err){
+  //       if(err){
+  //         for(var key in err.errors){
+  //           console.log(key);
+  //           console.log(err.errors[key].message);
+  //           req.flash(key, err.errors[key].message);
+  //         }
+  //         res.redirect('/');
+  //       }else{
+  //         console.log('Message successfully added to the database!');
+  //         res.redirect('/');
+  //       }
+  //     })
+  // },
+
+  create : function(req, res)  {
+    console.log("POST DATA", req.body);
+
+    var newReview = new Review({reviewer:req.body.name,rating:req.body.ratings,comment:req.body.review});
+    newReview.save(function(err){
+        if(err){
+          let messages = {}
+          for (let key in err.errors){
+            messages[key] = err.errors[key].message;
           }
+          res.json({status: false, messages: messages })
         }
-      )
+        else {
+          var newMovie = new Movie({title:req.body.title})
+          newMovie.reviews.push(newReview)
+          newMovie.save(function(err){
+            if(err){
+              let messages = {}
+              for (let key in err.errors){
+                messages[key] = err.errors[key].message;
+              }
+                res.json({status: false, messages: messages })
+            }
+          res.json({status: true, messages: {success:"Product successfully added!"},item: newMovie})
+        })
+      }
+    })
   },
 
+  createReview: function(req, res) {
+      console.log("POST DATA", req.body);
+      console.log("The movie id is:", req.params.id);
+      Review.create(req.body, function(err,data){
+        if(err){
+          let messages = {}
+          for (let key in err.errors){
+            messages[key] = err.errors[key].message;
+          }
+          res.json({status: false, messages: messages })
+        }
+        else {
+          Movie.findOneAndUpdate({_id:req.params.id},{$push: {reviews : data}}, function(err,data){
+            if(err){
+              let messages = {}
+              for (let key in err.errors){
+                messages[key] = err.errors[key].message;
+              }
+              res.json({status: false, messages: messages })
+            } else {
+              console.log('Message successfully updated with the Comment!');
+              res.json({status: true, messages: {success:"Review successfully added!"},item: Movie})            }
+          })
+        }
+      })
+    },
+
   getOne : (req, res) => {
-    Product.findOne({_id:req.params.id})
+    Movie.findOne({_id:req.params.id})
       .then(
         data => {
           console.log("IN CONTROLLER FINDONE",data);
@@ -60,30 +114,37 @@ module.exports = {
       )
   },
 
-  update : (req, res) => {
-    Product.findOneAndUpdate({_id:req.params.id},{$set:req.body},{runValidators: true,context: 'query'})
-      .then(
-        data => {
-          console.log("IN CONTROLLER update",data);
-          res.json({status: true, messages: {success:"Product updated successfully!"},item:data})
-        }
-      )
-      .catch(
-        err => {
-          console.log("IN CONTROLLER update errors",err);
-          if(err){
-            let messages = {}
-            for (let key in err.errors){
-              messages[key] = err.errors[key].message;
-            }
-            res.json({status: false, messages: messages })
-          }
-        }
-      )
-  },
 
-  deleteOne : (req, res) => {
-    Product.deleteOne({_id:req.params.id})
+  // deleteOne : (req, res) => {
+  //   Movie.deleteOne({_id:req.params.id})
+  //     .then(
+  //       data => {
+  //         console.log("IN CONTROLLER delete",data);
+  //         Movie.findOneAndUpdate({find},{$op: {reviews : data}}, function(err,data){
+  //           if(err){
+  //             let messages = {}
+  //             for (let key in err.errors){
+  //               messages[key] = err.errors[key].message;
+  //             }
+  //             res.json({status: false, messages: messages })
+  //           } else {
+  //             console.log('Message successfully updated with the Comment!');
+  //             res.json({status: true, messages: {success:"Review successfully added!"},item: Movie})            }
+  //         })
+  //         // res.json({status: true, messages: {success:"Product deleted successfully!"},item:data})
+  //       }
+  //     )
+  //     .catch(
+  //       error => {
+  //         console.log("IN CONTROLLER delete errors",error);
+  //         res.json({status: false, message: error })
+  //       }
+  //     )
+  // },
+
+  deleteReview : (req, res) => {
+    console.log("IN CONTROLLER",req.params.id)
+    Review.deleteOne({_id:req.params.id})
       .then(
         data => {
           console.log("IN CONTROLLER delete",data);

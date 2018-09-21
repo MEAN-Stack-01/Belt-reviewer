@@ -7,6 +7,6 @@ import { HttpService } from './http.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Product Management';
+  title = 'Squishy tomatoes';
   constructor(private _httpService: HttpService){}
 }

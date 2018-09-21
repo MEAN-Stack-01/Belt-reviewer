@@ -1,19 +1,25 @@
-<div class="products">
-  <div class="row">
-    <div class="col-md-4 " *ngFor="let item of all">
-      <div class="card mb-4 shadow-sm product" >
-        <img class="card-img-top" data-src="{{item.url}}" alt="Card image cap">
-        <div class="card-body">
-          <p class="card-text"> <span>{{item.title}}</span> </p>
-          <p class="card-text">  <span>${{item.price}}</span> </p>
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="btn-group">
-              <button type="button" [routerLink] = "['/products-list','edit', item._id]" class="btn btn-sm btn-outline-secondary"> EDIT </button>
-              <button type="button" (click)="onDelete(item._id)" class="btn btn-sm btn-outline-secondary"> DELETE </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="jumbotron home">
+  <h3 class="jumbotron-heading"> All Movies</h3>
+  <p> </p>
+  <p>
+    <a [routerLink] = "['new-product']" class="btn btn-primary my-2" > Add a new Movie </a>
+  </p>
+
 </div>
+
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">Movie TITLE</th>
+      <th scope="col">Average RATINGS</th>
+      <th scope="col">Available ACTIONS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of all">
+      <td>{{item.title}}</td>
+      <td> rating </td>
+      <td> <button type="button" [routerLink] = "['/products-list',item._id]" class="btn btn-sm btn-outline-secondary"> Read Reviews </button> <button type="button" [routerLink] = "['/products-list',item._id,'review']" class="btn btn-sm btn-outline-secondary"> Write Review </button></td>
+    </tr>
+  </tbody>
+</table>

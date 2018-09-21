@@ -8,9 +8,9 @@ export class HttpService {
 
   constructor(private _http: HttpClient) { }
 
-  createNew(newProduct){
+  createNew(newMovie){
     console.log("IN CREATE METHOD - SERVICE");
-    return this._http.post('/items/create',newProduct);
+    return this._http.post('/items/create',newMovie);
   }
 
   getAllStuff(){
@@ -23,6 +23,11 @@ export class HttpService {
     return this._http.get('/items/show/'+ id);
   }
 
+  createNewReview(newReview,id){
+    console.log("IN SERVICE REVIEW CREATE",id)
+    return this._http.post('/items/newRev/'+id,newReview);
+  }
+
   updateItem(item){
     console.log("IN SERVICE EDIT")
     return this._http.put('/items/update/'+item._id,item);
@@ -31,6 +36,11 @@ export class HttpService {
   deleteItem(id){
     console.log("IN SERVICE DELETE")
     return this._http.delete('/items/delete/'+id);
+  }
+
+  delReview(id){
+    console.log("IN SERVICE DELETE REVIEW",id)
+    return this._http.delete('/items/review/delete/'+id);
   }
 
 }

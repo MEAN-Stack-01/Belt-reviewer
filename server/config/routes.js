@@ -8,8 +8,12 @@ module.exports = function(app){
 
   app.post('/items/create', function(req,res){
       console.log("IN POST CREATE METHOD - ROUTE");
-
       controller.create(req,res);
+  });
+
+  app.post('/items/newRev/:id', function(req,res){
+      console.log("IN POST CREATE METHOD - ROUTE");
+      controller.createReview(req,res);
   });
 
   app.get('/items/show/:id', function(req,res){
@@ -25,5 +29,11 @@ module.exports = function(app){
     console.log("IN ROUTES DELETE")
       controller.deleteOne(req,res)
   });
+
+  app.delete('/items/review/delete/:id', function(req, res) {
+    console.log("IN ROUTES DELETE")
+      controller.deleteReview(req,res)
+  });
+
 
 }
